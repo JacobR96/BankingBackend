@@ -1,0 +1,4 @@
+.env.local
+bin
+.env
+env.local

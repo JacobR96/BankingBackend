@@ -1,10 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
-[Route("api/[controller]")]
+
+
 [ApiController]
+[Route("api/users")]
 public class UserController : ControllerBase
 {
     private readonly BankingContext _context;
@@ -14,31 +14,23 @@ public class UserController : ControllerBase
         _context = context;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<User>>> GetUsers()
-    {
-        return await _context.Users.ToListAsync();
-    }
-
+    // Example actions
     [HttpGet("{id}")]
-    public async Task<ActionResult<User>> GetUser(int id)
+    public async Task<IActionResult> GetUser(int id)
     {
         var user = await _context.Users.FindAsync(id);
-
         if (user == null)
         {
             return NotFound();
         }
-
-        return user;
+        return Ok(user);
     }
 
     [HttpPost]
-    public async Task<ActionResult<User>> PostUser(User user)
+    public async Task<IActionResult> CreateUser(User user)
     {
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-
         return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
     }
 
