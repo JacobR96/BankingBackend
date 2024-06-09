@@ -2,14 +2,24 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
-using Swashbuckle.AspNetCore.SwaggerGen;  // Adjusted import
-using Microsoft.OpenApi.Models;  // Add this line
+using Swashbuckle.AspNetCore.SwaggerGen;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Load environment variables from .env file if not already loaded
+DotNetEnv.Env.Load();
+
+// Get the connection string from the environment variable
+var connectionString = Environment.GetEnvironmentVariable("DbInfo");
+if (string.IsNullOrEmpty(connectionString))
+{
+    throw new ArgumentException("Database connection string is missing in environment variables.");
+}
+
 // Add services to the container.
 builder.Services.AddDbContext<BankingContext>(options =>
-    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    options.UseMySql(connectionString,
                      new MySqlServerVersion(new Version(8, 0, 33))));
 
 // Add Swagger services
